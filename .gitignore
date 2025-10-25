@@ -1,5 +1,7 @@
 *.log
 .DS_Store
+.claude
+.gemini
 .env
 .env.backup
 .env.production

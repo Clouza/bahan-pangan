@@ -1,0 +1,10 @@
+@layer base {
+    :root {
+        --primary-blue: #0a1c3c;
+        --secondary-gray: #e0e7ff;
+        --accent-red: #d90429;
+        --text-dark: #2b2d42;
+        --input-bg: #f8f9fa;
+        --input-border: #cbd5e1;
+    }
+}
