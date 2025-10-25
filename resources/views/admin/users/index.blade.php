@@ -1,120 +1,123 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html>
 
-@section('header')
-    <div class="flex min-w-72 flex-col gap-3">
-        <p class="text-[#171111] tracking-light text-[32px] font-bold leading-tight">
-            Pengguna
-        </p>
-        <p class="text-[#876464] text-sm font-normal leading-normal">
-            Kelola pengguna sistem
-        </p>
-    </div>
-@endsection
+<head>
+    <title>User Management - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-@section('content')
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
-                <div class="mb-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
+<body class="min-h-screen bg-gray-100">
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="flex justify-end mb-4">
-                        <a href="{{ route('admin.users.create') }}"
-                            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#9c1616] text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                            <span class="truncate">Tambah Pengguna</span>
-                        </a>
-                    </div>
+    <!-- header -->
+    <header class="bg-gradient-to-r from-gray-800 via-red-900 to-gray-800 text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold text-center">USER MANAGEMENT</h1>
+            <p class="text-center text-gray-200 mt-2">Administrator Panel</p>
+        </div>
+    </header>
 
-                    <h3 class="text-[#171111] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
-                        Daftar Pengguna
-                    </h3>
-                    <div class="px-4 py-3">
-                        <label class="flex flex-col min-w-40 h-12 w-full">
-                            <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
-                                <div class="text-[#876464] flex border-none bg-[#f4f0f0] items-center justify-center pl-4 rounded-l-xl border-r-0"
-                                    data-icon="MagnifyingGlass" data-size="24px" data-weight="regular">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
-                                        fill="currentColor" viewBox="0 0 256 256">
-                                        <path
-                                            d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <input placeholder="Cari pengguna..."
-                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#171111] focus:outline-0 focus:ring-0 border-none bg-[#f4f0f0] focus:border-none h-full placeholder:text-[#876464] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" />
-                            </div>
-                        </label>
-                    </div>
-                    <div class="px-4 py-3 @container">
-                        <div class="flex overflow-hidden rounded-xl border border-[#e5dcdc] bg-white">
-                            <table class="flex-1">
-                                <thead>
-                                    <tr class="bg-white">
-                                        <th class="px-4 py-3 text-left text-[#171111] w-10 text-sm font-medium leading-normal">
-                                            No
-                                        </th>
-                                        <th class="px-4 py-3 text-left text-[#171111] text-sm font-medium leading-normal">
-                                            Username
-                                        </th>
-                                        <th class="px-4 py-3 text-left text-[#171111] text-sm font-medium leading-normal">
-                                            Level User
-                                        </th>
-                                        <th class="px-4 py-3 text-left text-[#171111] text-sm font-medium leading-normal">
-                                            Role
-                                        </th>
-                                        <th class="px-4 py-3 text-left text-[#876464] text-sm font-medium leading-normal">
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($users as $index => $user)
-                                        <tr class="border-t border-t-[#e5dcdc]">
-                                            <td class="h-[72px] px-4 py-2 text-[#171111] text-sm font-normal leading-normal">
-                                                {{ $index + 1 }}
-                                            </td>
-                                            <td class="h-[72px] px-4 py-2 text-[#171111] text-sm font-normal leading-normal">
-                                                {{ $user->username }}
-                                            </td>
-                                            <td class="h-[72px] px-4 py-2 text-[#171111] text-sm font-normal leading-normal">
-                                                {{ $user->leveluser }}
-                                            </td>
-                                            <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
-                                                <button
-                                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 {{ $user->role == 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }} text-sm font-medium leading-normal w-full">
-                                                    <span class="truncate">{{ $user->role }}</span>
-                                                </button>
-                                            </td>
-                                            <td
-                                                class="h-[72px] px-4 py-2 text-sm font-bold leading-normal tracking-[0.015em]">
-                                                <div class="flex items-center gap-2">
-                                                    <a href="{{ route('admin.users.edit', $user->id) }}"
-                                                        class="text-blue-500">Edit</a>
-                                                    <form action="{{ route('admin.users.destroy', $user->id) }}"
-                                                        method="POST" class="inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="text-red-500"
-                                                            onclick="return confirm('Yakin ingin menghapus user ini?')">Hapus</button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr class="border-t border-t-[#e5dcdc]">
-                                            <td colspan="5" class="text-center py-4">Tidak ada data</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+    <div class="container mx-auto px-4 py-8">
+
+        <!-- admin navigation -->
+        <div class="mb-6 bg-white rounded-xl shadow-lg p-4 border border-gray-200">
+            <div class="flex flex-wrap gap-3">
+                <a href="{{ route('dashboard') }}"
+                    class="inline-block bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
+                    ← Dashboard
+                </a>
+                <a href="{{ route('admin.bahan-pangan.index') }}"
+                    class="inline-block bg-gray-100 hover:bg-red-800 hover:text-white text-gray-800 font-bold py-2 px-6 rounded-lg transition-all border border-gray-300">
+                    📦 Food Supply Management
+                </a>
+                <a href="{{ route('admin.users.index') }}"
+                    class="inline-block bg-red-800 text-white font-bold py-2 px-6 rounded-lg">
+                    👥 User Management
+                </a>
             </div>
         </div>
+
+        <!-- status notification -->
+        @if(session('success'))
+            <div class="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
+                ✓ {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+                ✗ {{ session('error') }}
+            </div>
+        @endif
+
+        <!-- add button -->
+        <div class="mb-6 flex justify-end">
+            <a href="{{ route('admin.users.create') }}"
+                class="bg-red-800 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
+                + Add New User
+            </a>
+        </div>
+
+        <!-- data table -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-red-800 text-white">
+                            <th class="py-3 px-4 text-left">No</th>
+                            <th class="py-3 px-4 text-left">Username</th>
+                            <th class="py-3 px-4 text-left">Level User</th>
+                            <th class="py-3 px-4 text-left">Role</th>
+                            <th class="py-3 px-4 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $nomor = 1;
+                        @endphp
+                        @forelse($users as $user)
+                            <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                <td class="py-3 px-4">{{ $nomor++ }}</td>
+                                <td class="py-3 px-4 font-semibold">{{ $user->username }}</td>
+                                <td class="py-3 px-4">{{ $user->leveluser }}</td>
+                                <td class="py-3 px-4">
+                                    <span
+                                        class="px-3 py-1 rounded-full text-sm font-semibold {{ $user->role == 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
+                                        {{ $user->role }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    <div class="flex gap-2 justify-center">
+                                        <!-- edit button -->
+                                        <a href="{{ route('admin.users.edit', $user->id) }}"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded transition-all text-sm">
+                                            Edit
+                                        </a>
+                                        <!-- delete button -->
+                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+                                            class="inline"
+                                            onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 rounded transition-all text-sm">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-4 px-4 text-center text-gray-500">No data available</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
-@endsection
+
+</body>
+
+</html>

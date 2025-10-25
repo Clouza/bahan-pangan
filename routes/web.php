@@ -25,4 +25,15 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('bahan-pangan', BahanPanganController::class);
         Route::resource('users', UserController::class);
     });
+
+    // data routes (for transaksi and history pembayaran)
+    Route::prefix('data')->name('data.')->group(function () {
+        Route::get('transaksi', function () {
+            return view('data.transaksi');
+        })->name('transaksi');
+
+        Route::get('history-pembayaran', function () {
+            return view('data.history-pembayaran');
+        })->name('history-pembayaran');
+    });
 });
