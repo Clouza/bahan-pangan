@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>FOOD PRICE DASHBOARD</title>
+    <title>DASBOR HARGA PANGAN</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -17,18 +17,18 @@
 
             @if(auth()->user()->leveluser == 'Dansat')
             <!-- title -->
-            <h1 class="text-4xl font-bold text-center mb-2">FOOD DATA</h1>
+            <h1 class="text-4xl font-bold text-center mb-2">DATA PANGAN</h1>
             <p class="text-xl text-center text-gray-200 mb-6">
                 SATUAN INTELIJEN KORBRIMOB POLRI
             </p>
 
             <!-- dropdown for data panel type -->
             <div class="flex justify-center items-center gap-3">
-                <label for="subjects" class="font-semibold text-lg">Data Panel Type:</label>
+                <label for="subjects" class="font-semibold text-lg">Tipe Panel Data:</label>
                 <select name="subjects" id="subjects"
                     class="px-4 py-2 rounded-lg bg-white text-gray-800 font-semibold border-2 border-gray-300 focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none transition-all cursor-pointer">
-                    <option value="konsumen">Consumer</option>
-                    <option value="produsen">Producer</option>
+                    <option value="konsumen">Konsumen</option>
+                    <option value="produsen">Produsen</option>
                 </select>
             </div>
             @endif
@@ -40,16 +40,16 @@
         <!-- date filter form -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border border-gray-200">
             <h3 class="text-xl font-bold text-gray-800 mb-4">
-                🔍 Filter Data By Date
+                🔍 Filter Data Berdasarkan Tanggal
             </h3>
             <form method="GET" action="{{ route('dashboard') }}" class="flex flex-wrap gap-4 items-end">
                 <div class="flex-1 min-w-[200px]">
-                    <label class="block text-gray-700 font-semibold mb-2">Start Date</label>
+                    <label class="block text-gray-700 font-semibold mb-2">Tanggal Mulai</label>
                     <input type="date" name="tanggal_awal" value="{{ $tanggal_awal }}" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none" />
                 </div>
                 <div class="flex-1 min-w-[200px]">
-                    <label class="block text-gray-700 font-semibold mb-2">End Date</label>
+                    <label class="block text-gray-700 font-semibold mb-2">Tanggal Akhir</label>
                     <input type="date" name="tanggal_akhir" value="{{ $tanggal_akhir }}" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none" />
                 </div>
@@ -60,7 +60,7 @@
                     </button>
                     <a href="{{ route('dashboard') }}"
                         class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
-                        Reset
+                        Atur Ulang
                     </a>
                 </div>
             </form>
@@ -130,7 +130,7 @@
                     @else
                         <tr class="border-b border-gray-200">
                             <td colspan="4" class="py-3 px-6 text-center text-gray-500">
-                                No data available for this date range
+                                Tidak ada data yang tersedia untuk rentang tanggal ini
                             </td>
                         </tr>
                     @endif
@@ -141,20 +141,20 @@
         <!-- navigation menu -->
         <div class="mt-8 bg-white rounded-xl shadow-lg p-6 border border-gray-200">
             <h3 class="text-2xl font-bold text-gray-800 mb-4">
-                Navigation Menu
+                Menu Navigasi
             </h3>
             <ul class="space-y-3">
                 @if(auth()->user()->role == 'admin')
                 <li>
                     <a href="{{ route('admin.bahan-pangan.index') }}"
                         class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
-                        📦 Food Supply Management
+                        📦 Manajemen Bahan Pangan
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('admin.users.index') }}"
                         class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
-                        👥 User Management
+                        👥 Manajemen Pengguna
                     </a>
                 </li>
                 @endif
@@ -163,7 +163,7 @@
                 <li>
                     <a href="{{ route('data.transaksi') }}"
                         class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
-                        📊 Payment Transaction
+                        📊 Transaksi Pembayaran
                     </a>
                 </li>
                 @endif
@@ -171,7 +171,7 @@
                 <li>
                     <a href="{{ route('data.history-pembayaran') }}"
                         class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
-                        📋 Payment History
+                        📋 Riwayat Pembayaran
                     </a>
                 </li>
             </ul>
@@ -183,7 +183,7 @@
                 @csrf
                 <button type="submit"
                     class="bg-red-800 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide">
-                    🚪 Logout
+                    🚪 Keluar
                 </button>
             </form>
         </div>

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>User Management - Admin</title>
+    <title>Manajemen Pengguna - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -11,8 +11,8 @@
     <!-- header -->
     <header class="bg-gradient-to-r from-gray-800 via-red-900 to-gray-800 text-white py-6 shadow-lg">
         <div class="container mx-auto px-4">
-            <h1 class="text-3xl font-bold text-center">USER MANAGEMENT</h1>
-            <p class="text-center text-gray-200 mt-2">Administrator Panel</p>
+            <h1 class="text-3xl font-bold text-center">MANAJEMEN PENGGUNA</h1>
+            <p class="text-center text-gray-200 mt-2">Panel Administrator</p>
         </div>
     </header>
 
@@ -23,15 +23,15 @@
             <div class="flex flex-wrap gap-3">
                 <a href="{{ route('dashboard') }}"
                     class="inline-block bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
-                    ← Dashboard
+                    ← Dasbor
                 </a>
                 <a href="{{ route('admin.bahan-pangan.index') }}"
                     class="inline-block bg-gray-100 hover:bg-red-800 hover:text-white text-gray-800 font-bold py-2 px-6 rounded-lg transition-all border border-gray-300">
-                    📦 Food Supply Management
+                    📦 Manajemen Bahan Pangan
                 </a>
                 <a href="{{ route('admin.users.index') }}"
                     class="inline-block bg-red-800 text-white font-bold py-2 px-6 rounded-lg">
-                    👥 User Management
+                    👥 Manajemen Pengguna
                 </a>
             </div>
         </div>
@@ -53,7 +53,7 @@
         <div class="mb-6 flex justify-end">
             <a href="{{ route('admin.users.create') }}"
                 class="bg-red-800 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
-                + Add New User
+                + Tambah Pengguna Baru
             </a>
         </div>
 
@@ -64,10 +64,10 @@
                     <thead>
                         <tr class="bg-red-800 text-white">
                             <th class="py-3 px-4 text-left">No</th>
-                            <th class="py-3 px-4 text-left">Username</th>
-                            <th class="py-3 px-4 text-left">Level User</th>
-                            <th class="py-3 px-4 text-left">Role</th>
-                            <th class="py-3 px-4 text-center">Action</th>
+                            <th class="py-3 px-4 text-left">Nama Pengguna</th>
+                            <th class="py-3 px-4 text-left">Level Pengguna</th>
+                            <th class="py-3 px-4 text-left">Peran</th>
+                            <th class="py-3 px-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,17 +90,17 @@
                                         <!-- edit button -->
                                         <a href="{{ route('admin.users.edit', $user->id) }}"
                                             class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded transition-all text-sm">
-                                            Edit
+                                            Ubah
                                         </a>
                                         <!-- delete button -->
                                         <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
                                             class="inline"
-                                            onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
                                                 class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 rounded transition-all text-sm">
-                                                Delete
+                                                Hapus
                                             </button>
                                         </form>
                                     </div>
@@ -108,7 +108,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-4 px-4 text-center text-gray-500">No data available</td>
+                                <td colspan="5" class="py-4 px-4 text-center text-gray-500">Tidak ada data yang tersedia</td>
                             </tr>
                         @endforelse
                     </tbody>

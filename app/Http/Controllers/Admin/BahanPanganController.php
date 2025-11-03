@@ -92,4 +92,10 @@ class BahanPanganController extends Controller
         return redirect()->route('admin.bahan-pangan.index')
             ->with('success', 'Data bahan pangan berhasil dihapus.');
     }
+
+    public function visualization()
+    {
+        $bahanPangans = BahanPangan::all();
+        return view('admin.bahan_pangan.visualization', compact('bahanPangans'));
+    }
 }

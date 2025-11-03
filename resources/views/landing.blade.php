@@ -12,7 +12,7 @@
                     </h2>
                 </div>
                 <a href="{{ route('login') }}" class="bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition-colors">
-                    Login
+                    Masuk
                 </a>
             </header>
 
@@ -29,7 +29,7 @@
             </main>
 
             <footer class="p-4 text-center text-white text-sm">
-                <p>&copy; {{ date('Y') }} Satuan Intelijen Korbrimob Polri. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} Satuan Intelijen Korbrimob Polri. Hak cipta dilindungi undang-undang.</p>
             </footer>
         </div>
     </div>

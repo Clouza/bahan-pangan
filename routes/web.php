@@ -23,10 +23,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Routes
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('bahan-pangan/visualization', [BahanPanganController::class, 'visualization'])->name('bahan-pangan.visualization');
         Route::resource('bahan-pangan', BahanPanganController::class);
         Route::resource('users', UserController::class);
         Route::resource('commodities', CommodityController::class);
-        Route::get('bahan-pangan/visualization', [DashboardController::class, 'showVisualization'])->name('bahan-pangan.visualization');
     });
 
     // data routes (for transaksi and history pembayaran)
