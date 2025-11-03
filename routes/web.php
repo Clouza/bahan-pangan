@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\BahanPanganController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\CommodityController;
 
 // Route for guest
 Route::get('/', function () {
@@ -24,6 +25,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::resource('bahan-pangan', BahanPanganController::class);
         Route::resource('users', UserController::class);
+        Route::resource('commodities', CommodityController::class);
+        Route::get('bahan-pangan/visualization', [DashboardController::class, 'showVisualization'])->name('bahan-pangan.visualization');
     });
 
     // data routes (for transaksi and history pembayaran)

@@ -11,6 +11,10 @@ class BahanPangan extends Model
         'tanggal',
         'harga',
         'kategori',
+        'provinsi',
+        'kabupaten',
+        'kecamatan',
+        'pasar',
     ];
 
     protected $casts = [

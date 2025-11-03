@@ -17,6 +17,10 @@ return new class extends Migration
             $table->date('tanggal');
             $table->integer('harga');
             $table->string('kategori');
+            $table->string('provinsi')->nullable();
+            $table->string('kabupaten')->nullable();
+            $table->string('kecamatan')->nullable();
+            $table->string('pasar')->nullable();
             $table->timestamps();
         });
     }

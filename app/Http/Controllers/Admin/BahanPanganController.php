@@ -8,9 +8,23 @@ use Illuminate\Http\Request;
 
 class BahanPanganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $bahanPangans = BahanPangan::latest()->get();
+        $query = BahanPangan::query();
+
+        if ($request->filled('komoditas')) {
+            $query->where('komoditas', 'like', '%' . $request->komoditas . '%');
+        }
+
+        if ($request->filled('pasar')) {
+            $query->where('pasar', 'like', '%' . $request->pasar . '%');
+        }
+
+        if ($request->filled('provinsi')) {
+            $query->where('provinsi', 'like', '%' . $request->provinsi . '%');
+        }
+
+        $bahanPangans = $query->latest()->get();
         return view('admin.bahan_pangan.index', compact('bahanPangans'));
     }
 
@@ -26,6 +40,10 @@ class BahanPanganController extends Controller
             'tanggal' => 'required|date',
             'harga' => 'required|integer|min:0',
             'kategori' => 'required|string|max:255',
+            'provinsi' => 'nullable|string|max:255',
+            'kabupaten' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
+            'pasar' => 'nullable|string|max:255',
         ]);
 
         BahanPangan::create($validated);
@@ -53,6 +71,10 @@ class BahanPanganController extends Controller
             'tanggal' => 'required|date',
             'harga' => 'required|integer|min:0',
             'kategori' => 'required|string|max:255',
+            'provinsi' => 'nullable|string|max:255',
+            'kabupaten' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
+            'pasar' => 'nullable|string|max:255',
         ]);
 
         $bahanPangan = BahanPangan::findOrFail($id);

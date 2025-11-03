@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Commodity extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'date',
+        'price',
+        'type',
+    ];
+}
