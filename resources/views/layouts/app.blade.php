@@ -9,7 +9,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.jsx'])
 </head>
 
 <body class="relative flex h-auto min-h-screen w-full flex-col bg-white group/design-root overflow-x-hidden">
@@ -28,6 +28,7 @@
             </div>
         </main>
     </div>
+    @stack('scripts')
 </body>
 
 </html>

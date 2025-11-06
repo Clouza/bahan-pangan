@@ -37,31 +37,105 @@
 
     <!-- main container -->
     <div class="container mx-auto px-4 py-8">
-        <!-- date filter form -->
+        <!-- date filter form (for table) -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border border-gray-200">
             <h3 class="text-xl font-bold text-gray-800 mb-4">
-                🔍 Filter Data Berdasarkan Tanggal
+                🔍 Filter Data Tabel
             </h3>
-            <form method="GET" action="{{ route('dashboard') }}" class="flex flex-wrap gap-4 items-end">
-                <div class="flex-1 min-w-[200px]">
-                    <label class="block text-gray-700 font-semibold mb-2">Tanggal Mulai</label>
-                    <input type="date" name="tanggal_awal" value="{{ $tanggal_awal }}" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none" />
+            <form method="GET" action="{{ route('dashboard') }}">
+                <!-- Hidden input to preserve main province filter -->
+                @if(request()->filled('provinsi'))
+                    <input type="hidden" name="provinsi" value="{{ request()->input('provinsi') }}">
+                @endif
+                <!-- Hidden inputs to preserve main table filters -->
+                @if(request()->filled('komoditas'))
+                    <input type="hidden" name="komoditas" value="{{ request()->input('komoditas') }}">
+                @endif
+                <input type="hidden" name="tanggal_awal" value="{{ $tanggal_awal }}">
+                <input type="hidden" name="tanggal_akhir" value="{{ $tanggal_akhir }}">
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label for="komoditas" class="block text-sm font-medium text-gray-700">Bahan Pangan</label>
+                        <select name="komoditas" id="komoditas" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                            <option value="">Semua</option>
+                            @foreach($commodities as $item)
+                                <option value="{{ $item }}" {{ old('komoditas', request()->input('komoditas')) == $item ? 'selected' : '' }}>{{ $item }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi</label>
+                        <select name="provinsi" id="provinsi" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                            <option value="">Semua</option>
+                            @foreach($provinces as $item)
+                                <option value="{{ $item }}" {{ old('provinsi', request()->input('provinsi')) == $item ? 'selected' : '' }}>{{ $item }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="tanggal_awal" class="block text-sm font-medium text-gray-700">Tanggal Mulai</label>
+                        <input type="date" name="tanggal_awal" id="tanggal_awal" value="{{ $tanggal_awal }}" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="tanggal_akhir" class="block text-sm font-medium text-gray-700">Tanggal Selesai</label>
+                        <input type="date" name="tanggal_akhir" id="tanggal_akhir" value="{{ $tanggal_akhir }}" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
                 </div>
-                <div class="flex-1 min-w-[200px]">
-                    <label class="block text-gray-700 font-semibold mb-2">Tanggal Akhir</label>
-                    <input type="date" name="tanggal_akhir" value="{{ $tanggal_akhir }}" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none" />
+                <div class="mt-4 flex items-center gap-x-3">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Filter</button>
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Reset</a>
                 </div>
-                <div class="flex gap-2">
-                    <button type="submit"
-                        class="bg-red-800 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
-                        Filter
-                    </button>
-                    <a href="{{ route('dashboard') }}"
-                        class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
-                        Atur Ulang
-                    </a>
+            </form>
+        </div>
+
+        <!-- Chart Filter Form -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border border-gray-200">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">
+                📈 Filter Data Grafik
+            </h3>
+            <form method="GET" action="{{ route('dashboard') }}">
+                <!-- Hidden input to preserve main province filter -->
+                @if(request()->filled('provinsi'))
+                    <input type="hidden" name="provinsi" value="{{ request()->input('provinsi') }}">
+                @endif
+                <!-- Hidden inputs to preserve main table filters -->
+                @if(request()->filled('komoditas'))
+                    <input type="hidden" name="komoditas" value="{{ request()->input('komoditas') }}">
+                @endif
+                <input type="hidden" name="tanggal_awal" value="{{ $tanggal_awal }}">
+                <input type="hidden" name="tanggal_akhir" value="{{ $tanggal_akhir }}">
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="chart_tanggal_awal" class="block text-sm font-medium text-gray-700">Tanggal Mulai (Grafik)</label>
+                        <input type="date" name="chart_tanggal_awal" id="chart_tanggal_awal" value="{{ $chart_tanggal_awal }}" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="chart_tanggal_akhir" class="block text-sm font-medium text-gray-700">Tanggal Selesai (Grafik)</label>
+                        <input type="date" name="chart_tanggal_akhir" id="chart_tanggal_akhir" value="{{ $chart_tanggal_akhir }}" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Bahan Pangan (Grafik)</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                        @foreach($commodities as $item)
+                            <div class="flex items-center">
+                                <input type="checkbox" name="chart_komoditas[]" value="{{ $item }}" id="chart_komoditas_{{ Str::slug($item) }}"
+                                    class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                                    {{ in_array($item, $chart_komoditas_selected) ? 'checked' : '' }}>
+                                <label for="chart_komoditas_{{ Str::slug($item) }}" class="ml-2 block text-sm text-gray-900">{{ $item }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="mt-4 flex items-center gap-x-3">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Filter Grafik</button>
+                    <a href="{{ route('dashboard', ['provinsi' => request()->input('provinsi'), 'komoditas' => request()->input('komoditas'), 'tanggal_awal' => $tanggal_awal, 'tanggal_akhir' => $tanggal_akhir]) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Reset Grafik</a>
                 </div>
             </form>
         </div>
@@ -138,6 +212,55 @@
             </table>
         </div>
 
+        <!-- Chart Section -->
+        <div class="bg-white rounded-xl shadow-xl p-6 mt-8 border border-gray-200">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">📈 Tren Harga Bahan Pangan</h3>
+            <div x-data="{ chartData: {{ json_encode($chartData) }} }" x-init="
+                let ctx = $refs.priceChart.getContext('2d');
+                let chart = new Chart(ctx, {
+                    type: 'line',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Pergerakan Harga Bahan Pangan'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Tanggal'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Harga (Rp)'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                $watch('chartData', value => {
+                    chart.data = value;
+                    chart.update();
+                });
+            ">
+                <canvas x-ref="priceChart" class="h-96"></canvas>
+            </div>
+        </div>
+
+
         <!-- navigation menu -->
         <div class="mt-8 bg-white rounded-xl shadow-lg p-6 border border-gray-200">
             <h3 class="text-2xl font-bold text-gray-800 mb-4">
@@ -196,4 +319,6 @@
         </div>
     </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </html>

@@ -23,7 +23,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Routes
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('bahan-pangan/visualization', [BahanPanganController::class, 'visualization'])->name('bahan-pangan.visualization');
+        Route::get('bahan-pangan/export-excel', [BahanPanganController::class, 'exportExcel'])->name('bahan-pangan.export-excel');
+        Route::get('bahan-pangan/export-csv', [BahanPanganController::class, 'exportCsv'])->name('bahan-pangan.export-csv');
+        Route::post('bahan-pangan/import', [BahanPanganController::class, 'import'])->name('bahan-pangan.import');
         Route::resource('bahan-pangan', BahanPanganController::class);
         Route::resource('users', UserController::class);
         Route::resource('commodities', CommodityController::class);
@@ -40,3 +42,5 @@ Route::middleware(['auth'])->group(function () {
         })->name('history-pembayaran');
     });
 });
+
+Route::get('/api/harga-pangan/{commodity}', [DashboardController::class, 'getHargaPanganByCommodity']);

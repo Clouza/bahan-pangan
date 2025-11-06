@@ -33,10 +33,7 @@
                     class="inline-block bg-gray-100 hover:bg-red-800 hover:text-white text-gray-800 font-bold py-2 px-6 rounded-lg transition-all border border-gray-300">
                     👥 Manajemen Pengguna
                 </a>
-                <a href="{{ route('admin.bahan-pangan.visualization') }}"
-                    class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
-                    📊 Visualisasi
-                </a>
+
             </div>
         </div>
 
@@ -59,21 +56,30 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label for="komoditas" class="block text-sm font-bold text-gray-700 mb-2">Komoditas</label>
-                        <input type="text" name="komoditas" id="komoditas" value="{{ request('komoditas') }}"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none"
-                            placeholder="Cari berdasarkan komoditas">
+                        <select name="komoditas" id="komoditas" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none">
+                            <option value="">Semua</option>
+                            @foreach($komoditas as $item)
+                                <option value="{{ $item }}" {{ request('komoditas') == $item ? 'selected' : '' }}>{{ $item }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div>
                         <label for="pasar" class="block text-sm font-bold text-gray-700 mb-2">Pasar</label>
-                        <input type="text" name="pasar" id="pasar" value="{{ request('pasar') }}"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none"
-                            placeholder="Cari berdasarkan pasar">
+                        <select name="pasar" id="pasar" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none">
+                            <option value="">Semua</option>
+                            @foreach($pasars as $item)
+                                <option value="{{ $item }}" {{ request('pasar') == $item ? 'selected' : '' }}>{{ $item }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div>
                         <label for="provinsi" class="block text-sm font-bold text-gray-700 mb-2">Provinsi</label>
-                        <input type="text" name="provinsi" id="provinsi" value="{{ request('provinsi') }}"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none"
-                            placeholder="Cari berdasarkan provinsi">
+                        <select name="provinsi" id="provinsi" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none">
+                            <option value="">Semua</option>
+                            @foreach($provinsis as $item)
+                                <option value="{{ $item }}" {{ request('provinsi') == $item ? 'selected' : '' }}>{{ $item }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="flex gap-3">
@@ -89,11 +95,37 @@
             </form>
         </div>
 
-        <div class="mb-6 flex justify-end">
+        <div class="mb-6 flex justify-end space-x-2">
             <a href="{{ route('admin.bahan-pangan.create') }}"
                 class="bg-red-800 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
                 + Tambah Data Baru
             </a>
+            <a href="{{ route('admin.bahan-pangan.export-excel') }}"
+                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
+                Export Excel
+            </a>
+            <a href="{{ route('admin.bahan-pangan.export-csv') }}"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
+                Export CSV
+            </a>
+        </div>
+
+        <div class="mb-6 bg-white rounded-xl shadow-lg p-4 border border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Import Data Bahan Pangan</h2>
+            <form action="{{ route('admin.bahan-pangan.import') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                <div>
+                    <label for="file" class="block text-sm font-bold text-gray-700 mb-2">Pilih File Excel/CSV</label>
+                    <input type="file" name="file" id="file" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none">
+                    @error('file')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <button type="submit"
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
+                    Import Data
+                </button>
+            </form>
         </div>
 
         <!-- data table -->

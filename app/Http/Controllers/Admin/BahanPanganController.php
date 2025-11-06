@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BahanPangan;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BahanPanganExport;
+use App\Imports\BahanPanganImport;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class BahanPanganController extends Controller
 {
@@ -13,19 +17,24 @@ class BahanPanganController extends Controller
         $query = BahanPangan::query();
 
         if ($request->filled('komoditas')) {
-            $query->where('komoditas', 'like', '%' . $request->komoditas . '%');
+            $query->where('komoditas', $request->komoditas);
         }
 
         if ($request->filled('pasar')) {
-            $query->where('pasar', 'like', '%' . $request->pasar . '%');
+            $query->where('pasar', $request->pasar);
         }
 
         if ($request->filled('provinsi')) {
-            $query->where('provinsi', 'like', '%' . $request->provinsi . '%');
+            $query->where('provinsi', $request->provinsi);
         }
 
         $bahanPangans = $query->latest()->get();
-        return view('admin.bahan_pangan.index', compact('bahanPangans'));
+
+        $komoditas = BahanPangan::select('komoditas')->distinct()->pluck('komoditas');
+        $pasars = BahanPangan::select('pasar')->distinct()->pluck('pasar');
+        $provinsis = BahanPangan::select('provinsi')->distinct()->pluck('provinsi');
+
+        return view('admin.bahan_pangan.index', compact('bahanPangans', 'komoditas', 'pasars', 'provinsis'));
     }
 
     public function create()
@@ -93,9 +102,62 @@ class BahanPanganController extends Controller
             ->with('success', 'Data bahan pangan berhasil dihapus.');
     }
 
-    public function visualization()
+    public function exportExcel()
     {
-        $bahanPangans = BahanPangan::all();
-        return view('admin.bahan_pangan.visualization', compact('bahanPangans'));
+        return Excel::download(new BahanPanganExport, 'bahan_pangan.xlsx');
+    }
+
+    public function exportCsv()
+    {
+        return Excel::download(new BahanPanganExport, 'bahan_pangan.csv', \Maatwebsite\Excel\Excel::CSV);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv'
+        ]);
+
+        try {
+            Excel::import(new BahanPanganImport, $request->file('file'));
+        } catch (ValidationException $e) {
+            $failures = $e->failures();
+            $errors = [];
+            foreach ($failures as $failure) {
+                $errors[] = 'Baris ' . $failure->row() . ': ' . implode(', ', $failure->errors());
+            }
+            return redirect()->back()->with('error', 'Gagal mengimpor data: ' . implode('; ', $errors));
+        }
+
+        return redirect()->route('admin.bahan-pangan.index')
+            ->with('success', 'Data bahan pangan berhasil diimpor.');
+    }
+
+    public function visualization(Request $request)
+    {
+        $query = BahanPangan::query();
+
+        if ($request->filled('komoditas')) {
+            $query->where('komoditas', $request->komoditas);
+        }
+
+        if ($request->filled('provinsi')) {
+            $query->where('provinsi', $request->provinsi);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->end_date);
+        }
+
+        $bahanPangans = $query->get();
+
+        $komoditas = BahanPangan::select('komoditas')->distinct()->pluck('komoditas');
+        $provinsi = BahanPangan::select('provinsi')->distinct()->pluck('provinsi');
+
+        return view('admin.bahan_pangan.visualization', compact('bahanPangans', 'komoditas', 'provinsi'));
     }
 }
