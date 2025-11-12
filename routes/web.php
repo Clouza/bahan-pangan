@@ -20,6 +20,9 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 // Authenticated Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('dashboard.export-excel');
+    Route::get('/kurs-dollar', [DashboardController::class, 'kursDollar'])->name('kurs.dollar');
+    Route::get('/harga-emas', [DashboardController::class, 'hargaEmas'])->name('harga.emas');
 
     // Admin Routes
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {

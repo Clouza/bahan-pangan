@@ -9,12 +9,27 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class BahanPanganExport implements FromCollection, WithHeadings, ShouldAutoSize
 {
+    protected $startDate;
+    protected $endDate;
+
+    public function __construct($startDate = null, $endDate = null)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
+
     /**
     * @return \Illuminate\Support\Collection
     */
     public function collection()
     {
-        return BahanPangan::select('id', 'komoditas', 'tanggal', 'harga', 'kategori', 'provinsi', 'kabupaten', 'kecamatan', 'pasar', 'created_at', 'updated_at')->get();
+        $query = BahanPangan::select('id', 'komoditas', 'tanggal', 'harga', 'kategori', 'provinsi', 'kabupaten', 'kecamatan', 'pasar', 'created_at', 'updated_at');
+
+        if ($this->startDate && $this->endDate) {
+            $query->whereBetween('tanggal', [$this->startDate, $this->endDate]);
+        }
+
+        return $query->get();
     }
 
     /**

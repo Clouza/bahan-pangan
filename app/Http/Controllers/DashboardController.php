@@ -5,9 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\BahanPangan;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
+use App\Exports\BahanPanganExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
+    public function exportExcel()
+    {
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subMonth();
+
+        return Excel::download(new BahanPanganExport($startDate, $endDate), 'bahan_pangan_satu_bulan.xlsx');
+    }
+
     public function index(Request $request)
     {
         // set default date range for table (last 7 days)
@@ -171,6 +182,110 @@ class DashboardController extends Controller
             "chart_tanggal_awal" => $chart_tanggal_awal,
             "chart_tanggal_akhir" => $chart_tanggal_akhir,
             "chart_komoditas_selected" => $chart_komoditas_selected,
+        ]);
+    }
+
+    public function kursDollar()
+    {
+        try {
+            $response = Http::get('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json');
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $idrRate = $data['usd']['idr'] ?? null;
+                $date = $data['date'] ?? null;
+
+                if ($idrRate && $date) {
+                    return view('kurs_dollar', [
+                        'date' => \Carbon\Carbon::parse($date)->isoFormat('D MMMM YYYY'),
+                        'idrRateFormatted' => number_format($idrRate, 2, ',', '.')
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to fetch currency data: ' . $e->getMessage());
+        }
+
+        return view('kurs_dollar', [
+            'error' => 'Gagal mengambil data kurs.'
+        ]);
+    }
+
+    public function hargaEmas()
+    {
+        try {
+            // Fire two requests concurrently
+            $responses = Http::pool(fn ($pool) => [
+                $pool->as('gold')->get('https://freegoldapi.com/data/latest.json'),
+                $pool->as('currency')->get('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json'),
+            ]);
+
+            // Check if both requests were successful
+            if ($responses['gold']->successful() && $responses['currency']->successful()) {
+                $goldData = $responses['gold']->json();
+                $currencyData = $responses['currency']->json();
+
+                $idrRate = $currencyData['usd']['idr'] ?? null;
+                if (!$idrRate) {
+                    throw new \Exception('Kurs IDR tidak ditemukan.');
+                }
+
+                // Get the latest price
+                $latestGoldEntry = end($goldData);
+                $latestPriceUsd = $latestGoldEntry['price']; // This is in USD per ounce
+                $latestDate = $latestGoldEntry['date'];
+
+                // Convert to IDR per ounce
+                $latestPriceIdrPerOunce = $latestPriceUsd * $idrRate;
+
+                // Convert from ounce to gram (1 troy ounce = 31.1035 grams)
+                $gramsPerOunce = 31.1035; // More precise value
+                $latestPriceIdrPerGram = $latestPriceIdrPerOunce / $gramsPerOunce;
+
+                // Prepare chart data for the current year
+                $currentYear = date('Y');
+                $chartHistory = array_filter($goldData, function ($entry) use ($currentYear) {
+                    return str_starts_with($entry['date'], $currentYear);
+                });
+
+                $chartLabels = [];
+                $chartPrices = [];
+                foreach ($chartHistory as $entry) {
+                    // Convert each historical price to IDR per gram
+                    $priceUsdPerOunce = $entry['price'];
+                    $priceIdrPerOunce = $priceUsdPerOunce * $idrRate;
+                    $priceIdrPerGram = $priceIdrPerOunce / $gramsPerOunce;
+
+                    $chartLabels[] = \Carbon\Carbon::parse($entry['date'])->format('d M');
+                    $chartPrices[] = $priceIdrPerGram;
+                }
+
+                $chartData = [
+                    'labels' => $chartLabels,
+                    'datasets' => [
+                        [
+                            'label' => 'Harga Emas (IDR)',
+                            'data' => $chartPrices,
+                            'borderColor' => 'rgba(234, 179, 8, 1)',
+                            'backgroundColor' => 'rgba(234, 179, 8, 0.2)',
+                            'fill' => true,
+                            'tension' => 0.1,
+                        ],
+                    ],
+                ];
+
+                return view('harga_emas', [
+                    'latestDate' => \Carbon\Carbon::parse($latestDate)->isoFormat('D MMMM YYYY'),
+                    'latestPriceFormatted' => number_format($latestPriceIdrPerGram, 2, ',', '.'),
+                    'chartData' => $chartData,
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengambil data harga emas: ' . $e->getMessage());
+        }
+
+        return view('harga_emas', [
+            'error' => 'Gagal mengambil data harga emas.'
         ]);
     }
 

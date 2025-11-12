@@ -22,14 +22,22 @@
                 SATUAN INTELIJEN KORBRIMOB POLRI
             </p>
 
-            <!-- dropdown for data panel type -->
-            <div class="flex justify-center items-center gap-3">
-                <label for="subjects" class="font-semibold text-lg">Tipe Panel Data:</label>
-                <select name="subjects" id="subjects"
-                    class="px-4 py-2 rounded-lg bg-white text-gray-800 font-semibold border-2 border-gray-300 focus:border-red-800 focus:ring-2 focus:ring-red-800/20 outline-none transition-all cursor-pointer">
-                    <option value="konsumen">Konsumen</option>
-                    <option value="produsen">Produsen</option>
-                </select>
+            <!-- Tab Navigation -->
+            <div class="mt-6">
+                <div class="flex justify-center border-b border-gray-400">
+                    <a href="{{ route('dashboard') }}"
+                        class="px-4 py-2 font-semibold focus:outline-none border-b-2 border-white text-white">
+                        Data Pangan
+                    </a>
+                    <a href="{{ route('kurs.dollar') }}"
+                        class="px-4 py-2 font-semibold focus:outline-none text-gray-300 hover:text-white">
+                        Kurs Dollar
+                    </a>
+                    <a href="{{ route('harga.emas') }}"
+                        class="px-4 py-2 font-semibold focus:outline-none text-gray-300 hover:text-white">
+                        Harga Emas
+                    </a>
+                </div>
             </div>
             @endif
         </div>
@@ -53,7 +61,6 @@
                 @endif
                 <input type="hidden" name="tanggal_awal" value="{{ $tanggal_awal }}">
                 <input type="hidden" name="tanggal_akhir" value="{{ $tanggal_akhir }}">
-
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
@@ -86,6 +93,7 @@
                 <div class="mt-4 flex items-center gap-x-3">
                     <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Filter</button>
                     <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Reset</a>
+                    <a href="{{ route('dashboard.export-excel') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Ekspor 1 Bulan (Excel)</a>
                 </div>
             </form>
         </div>
