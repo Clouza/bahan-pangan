@@ -31,17 +31,6 @@ class DashboardController extends Controller
             Carbon::now()->format("Y-m-d"),
         );
 
-        // set default date range for chart (last 30 days)
-        $chart_tanggal_awal = $request->get(
-            "chart_tanggal_awal",
-            Carbon::now()->subDays(30)->format("Y-m-d"),
-        );
-        $chart_tanggal_akhir = $request->get(
-            "chart_tanggal_akhir",
-            Carbon::now()->format("Y-m-d"),
-        );
-        $chart_komoditas_selected = $request->get("chart_komoditas", []);
-
         // --- Table Data Preparation ---
         $tableQuery = BahanPangan::query();
 
@@ -71,117 +60,46 @@ class DashboardController extends Controller
         }
         // --- End Table Data Preparation ---
 
-        // --- Visualization Data Preparation ---
-        $chartData = [
-            "labels" => [],
-            "datasets" => [],
-        ];
-
-        $chartQuery = BahanPangan::query();
-
-        // Apply chart-specific commodity filter
-        if (!empty($chart_komoditas_selected)) {
-            $chartQuery->whereIn("komoditas", $chart_komoditas_selected);
-        }
-
-        // Apply main province filter to chart
-        if ($request->filled("provinsi")) {
-            $chartQuery->where("provinsi", $request->provinsi);
-        }
-
-        // get data within date range for chart
-        $chartResult = $chartQuery
-            ->whereBetween("tanggal", [
-                $chart_tanggal_awal,
-                $chart_tanggal_akhir,
-            ])
-            ->orderBy("komoditas", "asc")
-            ->orderBy("tanggal", "asc")
+        // --- Visualization Data Preparation for Bar Chart ---
+        $latestPrices = BahanPangan::select('komoditas', 'harga')
+            ->whereIn('id', function ($query) {
+                $query->selectRaw('MAX(id)')
+                    ->from('bahan_pangans')
+                    ->groupBy('komoditas');
+            })
             ->get();
 
-        if ($chartResult->isNotEmpty()) {
-            // Generate all dates within the selected chart date range
-            $period = Carbon::parse($chart_tanggal_awal)->daysUntil(
-                Carbon::parse($chart_tanggal_akhir),
-            );
-            $labels = [];
-            foreach ($period as $date) {
-                $labels[] = $date->format("Y-m-d");
-            }
-            // Ensure the end date is included if it's not already
-            if (
-                !in_array(
-                    Carbon::parse($chart_tanggal_akhir)->format("Y-m-d"),
-                    $labels,
-                )
-            ) {
-                $labels[] = Carbon::parse($chart_tanggal_akhir)->format(
-                    "Y-m-d",
-                );
-            }
-            sort($labels); // Ensure labels are sorted chronologically
+        $chartLabels = $latestPrices->pluck('komoditas');
+        $chartValues = $latestPrices->pluck('harga');
 
-            // Group chartResult by date and then by commodity for efficient lookup
-            $groupedChartData = $chartResult->groupBy(fn($item) => Carbon::parse($item->tanggal)->format('Y-m-d'))->map(function ($dateGroup) {
-                    return $dateGroup
-                        ->groupBy("komoditas")
-                        ->map(function ($commodityGroup) {
-                            return $commodityGroup->avg("harga");
-                        });
-                });
+        $maxPrice = $chartValues->max();
 
-            // Prepare datasets for Chart.js
-            $datasets = [];
-            $uniqueChartCommodities = $chartResult
-                ->pluck("komoditas")
-                ->unique();
+        $backgroundColors = $chartValues->map(function ($price) use ($maxPrice) {
+            return $price == $maxPrice ? '#ef4444' : '#22c55e'; // Red for max, Green for others
+        });
 
-            foreach ($uniqueChartCommodities as $commodity) {
-                $data = [];
-                foreach ($labels as $date) {
-                    $price = $groupedChartData
-                        ->get($date, collect())
-                        ->get($commodity);
-                    $data[] = $price ? round($price) : null;
-                }
-
-                $datasets[] = [
-                    "label" => $commodity,
-                    "data" => $data,
-                    "borderColor" =>
-                        "rgba(" .
-                        rand(0, 255) .
-                        "," .
-                        rand(0, 255) .
-                        "," .
-                        rand(0, 255) .
-                        ", 1)", // Random color
-                    "fill" => false,
-                    "tension" => 0.1,
-                ];
-            }
-
-            $chartData = [
-                "labels" => $labels,
-                "datasets" => $datasets,
-            ];
-        }
+        $barChartData = [
+            'labels' => $chartLabels,
+            'datasets' => [
+                [
+                    'label' => 'Harga Terkini',
+                    'data' => $chartValues,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ];
         // --- End Visualization Data Preparation ---
 
-        $commodities = BahanPangan::distinct()->pluck("komoditas");
-        $provinces = BahanPangan::distinct()->pluck("provinsi");
-        \Log::info($chartData);
+        $commodities = BahanPangan::distinct()->pluck('komoditas');
+        $provinces = BahanPangan::distinct()->pluck('provinsi');
 
-        return view("dashboard", [
-            "tanggal_awal" => $tanggal_awal,
-            "tanggal_akhir" => $tanggal_akhir,
-            "data_per_komoditas" => $data_per_komoditas,
-            "commodities" => $commodities,
-            "provinces" => $provinces,
-            "chartData" => $chartData, // Pass chart data to the view
-            "chart_tanggal_awal" => $chart_tanggal_awal,
-            "chart_tanggal_akhir" => $chart_tanggal_akhir,
-            "chart_komoditas_selected" => $chart_komoditas_selected,
+        return view('dashboard', [
+            'tanggal_awal' => $tanggal_awal,
+            'tanggal_akhir' => $tanggal_akhir,
+            'data_per_komoditas' => $data_per_komoditas,
+            'commodities' => $commodities,
+            'provinces' => $provinces,
+            'barChartData' => $barChartData, // Pass bar chart data to the view
         ]);
     }
 

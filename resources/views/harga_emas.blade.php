@@ -104,45 +104,6 @@
         @endif
 
 
-        <!-- navigation menu -->
-        <div class="mt-8 bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-            <h3 class="text-2xl font-bold text-gray-800 mb-4">
-                Menu Navigasi
-            </h3>
-            <ul class="space-y-3">
-                @if(auth()->user()->role == 'admin')
-                <li>
-                    <a href="{{ route('admin.bahan-pangan.index') }}"
-                        class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
-                        📦 Manajemen Bahan Pangan
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.users.index') }}"
-                        class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
-                        👥 Manajemen Pengguna
-                    </a>
-                </li>
-                @endif
-
-                @if(in_array(auth()->user()->leveluser, ['anggota', 'Dansat']))
-                <li>
-                    <a href="{{ route('data.transaksi') }}"
-                        class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
-                        📊 Transaksi Pembayaran
-                    </a>
-                </li>
-                @endif
-
-                <li>
-                    <a href="{{ route('data.history-pembayaran') }}"
-                        class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
-                        📋 Riwayat Pembayaran
-                    </a>
-                </li>
-            </ul>
-        </div>
-
         <!-- logout button -->
         <div class="mt-8 text-center">
             <form action="{{ route('logout') }}" method="POST" class="inline">
@@ -157,7 +118,7 @@
         <!-- footer -->
         <div class="mt-8 text-center text-gray-500 text-sm">
             <p>
-                &copy; {{ date('Y') }} Data Pangan Indonesia - KORBRIMOB POLRI
+                &copy; {{ date('Y') }} Jl. Anyelir No.23, Pasir Gn. Sel., Kec. Cimanggis, Kota Depok, Jawa Barat 16451
             </p>
         </div>
     </div>
