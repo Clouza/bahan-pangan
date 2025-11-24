@@ -187,21 +187,21 @@
                     </li>
                 @endif
 
-                @if (in_array(auth()->user()->leveluser, ['anggota', 'Dansat']))
+                {{-- @if (in_array(auth()->user()->leveluser, ['anggota', 'Dansat']))
                     <li>
                         <a href="{{ route('data.transaksi') }}"
                             class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
                             📊 Transaksi Pembayaran
                         </a>
                     </li>
-                @endif
+                @endif --}}
 
-                <li>
+                {{-- <li>
                     <a href="{{ route('data.history-pembayaran') }}"
                         class="block px-4 py-3 bg-gray-100 hover:bg-red-800 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-gray-300 hover:border-red-800">
                         📋 Riwayat Pembayaran
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </div>
 
