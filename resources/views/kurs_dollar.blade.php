@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <title>KURS DOLLAR - DASBOR HARGA PANGAN</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,30 +16,30 @@
                     class="rounded-full border-4 border-white shadow-xl" />
             </div>
 
-            @if(auth()->user()->leveluser == 'Dansat')
-            <!-- title -->
-            <h1 class="text-4xl font-bold text-center mb-2">KURS DOLLAR</h1>
-            <p class="text-xl text-center text-gray-200 mb-6">
-                SATUAN INTELIJEN KORBRIMOB POLRI
-            </p>
+            @if (auth()->user()->leveluser == 'Dansat')
+                <!-- title -->
+                <h1 class="text-4xl font-bold text-center mb-2">KURS DOLLAR</h1>
+                <p class="text-xl text-center text-gray-200 mb-6">
+                    SATUAN INTELIJEN KORBRIMOB POLRI
+                </p>
 
-            <!-- Tab Navigation -->
-            <div class="mt-6">
-                <div class="flex justify-center border-b border-gray-400">
-                    <a href="{{ route('dashboard') }}"
-                        class="px-4 py-2 font-semibold focus:outline-none text-gray-300 hover:text-white">
-                        Data Pangan
-                    </a>
-                    <a href="{{ route('kurs.dollar') }}"
-                        class="px-4 py-2 font-semibold focus:outline-none border-b-2 border-white text-white">
-                        Kurs Dollar
-                    </a>
-                    <a href="{{ route('harga.emas') }}"
-                        class="px-4 py-2 font-semibold focus:outline-none text-gray-300 hover:text-white">
-                        Harga Emas
-                    </a>
+                <!-- Tab Navigation -->
+                <div class="mt-6">
+                    <div class="flex justify-center border-b border-gray-400">
+                        <a href="{{ route('dashboard') }}"
+                            class="px-4 py-2 font-semibold focus:outline-none text-gray-300 hover:text-white">
+                            Data Pangan
+                        </a>
+                        <a href="{{ route('kurs.dollar') }}"
+                            class="px-4 py-2 font-semibold focus:outline-none border-b-2 border-white text-white">
+                            Kurs Dollar
+                        </a>
+                        <a href="{{ route('harga.emas') }}"
+                            class="px-4 py-2 font-semibold focus:outline-none text-gray-300 hover:text-white">
+                            Harga Emas
+                        </a>
+                    </div>
                 </div>
-            </div>
             @endif
         </div>
     </header>
@@ -49,7 +50,7 @@
             <h3 class="text-xl font-bold text-gray-800 mb-4">
                 Informasi Kurs Dollar (USD ke IDR)
             </h3>
-            @if(isset($error))
+            @if (isset($error))
                 <div class="text-red-500">{{ $error }}</div>
             @elseif(isset($date) && isset($idrRateFormatted))
                 <p class="text-gray-600 mb-2">Terakhir diperbarui: {{ $date }}</p>
@@ -72,9 +73,10 @@
         <!-- footer -->
         <div class="mt-8 text-center text-gray-500 text-sm">
             <p>
-                &copy; {{ date('Y') }} Jl. Anyelir No.23, Pasir Gn. Sel., Kec. Cimanggis, Kota Depok, Jawa Barat 16451
+                &copy; {{ date('Y') }} Jl. Komjen Pol M. Jasin, Cimanggis, Depok 16451
             </p>
         </div>
     </div>
 </body>
+
 </html>

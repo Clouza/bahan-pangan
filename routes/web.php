@@ -29,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('bahan-pangan/export-excel', [BahanPanganController::class, 'exportExcel'])->name('bahan-pangan.export-excel');
         Route::get('bahan-pangan/export-csv', [BahanPanganController::class, 'exportCsv'])->name('bahan-pangan.export-csv');
         Route::post('bahan-pangan/import', [BahanPanganController::class, 'import'])->name('bahan-pangan.import');
+        Route::get('bahan-pangan/visualization', [BahanPanganController::class, 'visualization'])->name('bahan-pangan.visualization');
         Route::resource('bahan-pangan', BahanPanganController::class);
         Route::resource('users', UserController::class);
         Route::resource('commodities', CommodityController::class);
