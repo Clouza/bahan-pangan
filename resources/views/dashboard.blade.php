@@ -3,7 +3,8 @@
 
 <head>
     <title>DASBOR HARGA PANGAN</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @viteReactRefresh
+    @vite(['resources/css/app.css', 'resources/js/app.jsx'])
 </head>
 
 <body class="min-h-screen bg-gray-100">
@@ -112,6 +113,12 @@
                         1 Bulan (Excel)</a>
                 </div>
             </form>
+        </div>
+
+        <!-- Map Section -->
+        <div class="bg-white rounded-xl shadow-xl p-6 mb-8 border border-gray-200">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">🗺️ Peta Harga Pangan</h3>
+            <div id="interactive-map" data-commodities="{{ json_encode($commodities) }}"></div>
         </div>
 
         <!-- Chart Section -->
