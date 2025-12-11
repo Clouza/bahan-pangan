@@ -33,10 +33,10 @@
                     class="inline-block bg-gray-100 hover:bg-red-800 hover:text-white text-gray-800 font-bold py-2 px-6 rounded-lg transition-all border border-gray-300">
                     👥 Manajemen Pengguna
                 </a>
-                <a href="{{ route('admin.bahan-pangan.visualization') }}"
+                {{-- <a href="{{ route('admin.bahan-pangan.visualization') }}"
                     class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all">
                     📊 Visualisasi
-                </a>
+                </a> --}}
             </div>
         </div>
 
