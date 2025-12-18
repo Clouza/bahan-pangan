@@ -212,11 +212,15 @@ class DashboardController extends Controller
         // This method is no longer used and will be removed.
     }
 
-    public function getHargaPanganByCommodity($commodity)
+    public function getHargaPanganByCommodity($commodity, Request $request)
     {
-        $data = BahanPangan::where("komoditas", $commodity)
-            ->select("provinsi", "harga")
-            ->orderBy("tanggal", "desc")
+        $query = BahanPangan::where("komoditas", $commodity);
+
+        if ($request->has('date')) {
+            $query->whereDate('tanggal', $request->date);
+        }
+
+        $data = $query->orderBy("tanggal", "desc")
             ->get()
             ->groupBy("provinsi")
             ->map(function ($group) {
@@ -225,5 +229,106 @@ class DashboardController extends Controller
             ->values();
 
         return response()->json($data);
+    }
+
+    public function priceMonitoring(Request $request)
+    {
+        $commodities = BahanPangan::distinct()->pluck('komoditas');
+        $provinces = BahanPangan::distinct()->pluck('provinsi');
+
+        // Default settings
+        $selectedCommodity = $request->get('commodity', $commodities->first());
+        $date = $request->get('date', Carbon::now()->format('Y-m-d'));
+
+        // --- Disparity Data (Left Column) ---
+        // Try to get prices for selected date
+        $prices = BahanPangan::where('komoditas', $selectedCommodity)
+            ->whereDate('tanggal', $date)
+            ->get();
+
+        // If no data found for selected date, find the latest available date
+        if ($prices->isEmpty()) {
+            $latestDateEntry = BahanPangan::where('komoditas', $selectedCommodity)
+                ->orderBy('tanggal', 'desc')
+                ->first();
+            
+            if ($latestDateEntry) {
+                $date = Carbon::parse($latestDateEntry->tanggal)->format('Y-m-d');
+                $prices = BahanPangan::where('komoditas', $selectedCommodity)
+                    ->whereDate('tanggal', $date)
+                    ->get();
+            }
+        }
+
+        $nationalAvg = $prices->isNotEmpty() ? $prices->avg('harga') : 0;
+
+        $disparityData = $prices->map(function ($item) use ($nationalAvg) {
+            $diff = $item->harga - $nationalAvg;
+            return [
+                'province' => $item->provinsi,
+                'price' => $item->harga,
+                'deviation' => $diff,
+                'percentage' => $nationalAvg > 0 ? ($diff / $nationalAvg) * 100 : 0
+            ];
+        })->sortByDesc('deviation')->values();
+
+        // --- Table Data (Right Column) ---
+        $date1 = $request->get('date1', Carbon::parse($date)->subDay()->format('Y-m-d'));
+        $date2 = $request->get('date2', $date);
+        $filterType = $request->get('filter_type', 'nasional');
+        $filterCity = $request->get('filter_city', $provinces->first());
+
+        $tableData = [];
+
+        foreach ($commodities as $comm) {
+            $q1 = BahanPangan::where('komoditas', $comm)->whereDate('tanggal', $date1);
+            $q2 = BahanPangan::where('komoditas', $comm)->whereDate('tanggal', $date2);
+
+            if ($filterType == 'city' && $filterCity) {
+                $p1 = $q1->where('provinsi', $filterCity)->value('harga');
+                $p2 = $q2->where('provinsi', $filterCity)->value('harga');
+            } else {
+                // Nasional
+                $p1 = $q1->avg('harga');
+                $p2 = $q2->avg('harga');
+            }
+            
+            $val1 = $p1 ?? 0;
+            $val2 = $p2 ?? 0;
+
+            $tableData[] = [
+                'name' => $comm,
+                'unit' => 'kg', // Assumption
+                'price1' => $val1,
+                'price2' => $val2,
+                'change' => $val2 - $val1,
+                'change_pct' => ($val1 > 0) ? (($val2 - $val1) / $val1) * 100 : 0
+            ];
+        }
+
+        // --- Trend Data (Footer Line Chart) ---
+        // Get daily average for the current month of the selected date
+        $startOfMonth = Carbon::parse($date)->startOfMonth();
+        $endOfMonth = Carbon::parse($date)->endOfMonth();
+        
+        $trendData = BahanPangan::where('komoditas', $selectedCommodity)
+            ->whereBetween('tanggal', [$startOfMonth, $endOfMonth])
+            ->selectRaw('DATE(tanggal) as date, AVG(harga) as avg_price')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->map(function($item) {
+                return [
+                    'date' => Carbon::parse($item->date)->format('d'),
+                    'price' => (float)$item->avg_price
+                ];
+            });
+
+        return view('price_monitoring', compact(
+            'commodities', 'provinces', 'selectedCommodity', 'date',
+            'disparityData', 'nationalAvg',
+            'date1', 'date2', 'filterType', 'filterCity', 'tableData',
+            'trendData'
+        ));
     }
 }
